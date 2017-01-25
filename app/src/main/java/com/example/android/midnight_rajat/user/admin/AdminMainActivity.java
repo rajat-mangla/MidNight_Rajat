@@ -1,23 +1,19 @@
 package com.example.android.midnight_rajat.user.admin;
 
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TableLayout;
-import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.example.android.midnight_rajat.R;
+import com.example.android.midnight_rajat.user.admin.FoodItems.ShowItemsFragment;
 
-import static com.example.android.midnight_rajat.user.admin.AdminMainActivity.NUM_PAGES;
-
-public class AdminMainActivity extends FragmentActivity {
+public class AdminMainActivity extends AppCompatActivity {
 
 
     public static final int NUM_PAGES = 3;
@@ -28,9 +24,14 @@ public class AdminMainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        viewPager = (ViewPager)findViewById(R.id.mainpager);
+
+
+        viewPager = (ViewPager)findViewById(R.id.viewpager);
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
@@ -55,10 +56,6 @@ public class AdminMainActivity extends FragmentActivity {
     }
 
 
-
-
-
-
     /**
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
      * sequence.
@@ -71,7 +68,7 @@ public class AdminMainActivity extends FragmentActivity {
         @Override
         public Fragment getItem(int position) {
 
-            return new AddItemsFragment();
+            return new ShowItemsFragment();
         }
 
         @Override

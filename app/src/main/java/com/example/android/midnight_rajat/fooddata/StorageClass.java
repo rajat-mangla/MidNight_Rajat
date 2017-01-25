@@ -11,9 +11,7 @@ public class StorageClass {
     private static ArrayList<FoodDetails> foodCart;
 
     public StorageClass() {
-        if (foodItems == null) {
-            foodItems = new ArrayList<>();
-        }
+
     }
 
     public void setCatalogData(FoodDetails item) {
@@ -21,6 +19,9 @@ public class StorageClass {
     }
 
     public ArrayList<FoodDetails> getCatalogData() {
+        if (foodItems == null) {
+            foodItems = new ArrayList<>();
+        }
         return foodItems;
     }
 
