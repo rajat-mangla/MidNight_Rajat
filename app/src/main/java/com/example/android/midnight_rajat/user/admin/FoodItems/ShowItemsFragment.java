@@ -67,6 +67,7 @@ public class ShowItemsFragment extends Fragment implements AddOrEditItem.getData
         dialogFragment.setTargetFragment(ShowItemsFragment.this,1);
         dialogFragment.show(getFragmentManager(),"AddItem");
     }
+
     @Override
     public void onAddDialogClick(FoodDetails foodDetails) {
         new StorageClass().getCatalogData().add(foodDetails);
@@ -77,13 +78,14 @@ public class ShowItemsFragment extends Fragment implements AddOrEditItem.getData
         DialogFragment dialogFragment = new AddOrEditItem();
         Bundle bundle = new Bundle();
         bundle.putInt("INDEX_OF_FOOD",index);
+        bundle.putSerializable("FOOD",foodDetail);
         dialogFragment.setArguments(bundle);
         dialogFragment.setTargetFragment(ShowItemsFragment.this,1);
         dialogFragment.show(getFragmentManager(),"AddItem");
-
     }
 
-
-
-
+    @Override
+    public void onEditDialogClick() {
+        showItemsAdapter.notifyDataSetChanged();
+    }
 }

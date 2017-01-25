@@ -21,6 +21,18 @@ public class FoodDetails implements Serializable {
         foodQuantity = 0;
     }
 
+    public void setFoodImage(int foodImage) {
+        this.foodImage = foodImage;
+    }
+
+    public void setFoodName(String foodName) {
+        this.foodName = foodName;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
     public int getPrice() {
         return price;
     }

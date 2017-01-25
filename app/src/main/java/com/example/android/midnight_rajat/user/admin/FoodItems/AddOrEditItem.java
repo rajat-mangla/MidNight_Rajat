@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -33,12 +32,14 @@ public class AddOrEditItem extends DialogFragment {
     private final int STORAGE_PERMISSION = 2;
     private final int PICK_IMAGE = 1;
 
-    View view;
-    private FoodDetails foodData;
 
-    public void editItemData(FoodDetails foodData){
-        this.foodData = foodData;
-    }
+    /*
+     * Layout VARIABLES
+    */
+    View view;
+    ImageView foodImage;
+    EditText foodName;
+    EditText foodPrice;
 
 
     /*
@@ -46,6 +47,7 @@ public class AddOrEditItem extends DialogFragment {
      */
     public interface getDataInterface {
         void onAddDialogClick(FoodDetails foodDetails);
+        void onEditDialogClick();
     }
 
     getDataInterface callback;
@@ -67,12 +69,23 @@ public class AddOrEditItem extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        /*
+        working the Xml layout
+            * retrieving
+            * assigning to the variables
+         */
         LayoutInflater inflater = getActivity().getLayoutInflater();
         view = inflater.inflate(R.layout.activity_add_or_edit_item, null);
-        if (foodData==null){
+        foodImage = (ImageView) view.findViewById(R.id.fimage);
+        foodName = (EditText) view.findViewById(R.id.fname);
+        foodPrice = (EditText) view.findViewById(R.id.fprice);
+        /*
+            * Ends
+        */
+
+        if (getArguments()==null) {
             builder.setView(view)
                     .setTitle("Add Item")
                     .setPositiveButton("Add", new DialogInterface.OnClickListener() {
@@ -82,7 +95,7 @@ public class AddOrEditItem extends DialogFragment {
                             Toast.makeText(getContext(), "Added", Toast.LENGTH_SHORT).show();
 
 
-                            callback.onAddDialogClick(getEnteredData(view));
+                            callback.onAddDialogClick(getEnteredData());
 
                         }
                     })
@@ -92,8 +105,11 @@ public class AddOrEditItem extends DialogFragment {
                             Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
                         }
                     });
-        }
-        else {
+        } else {
+            /*
+            Displaying the Food Data
+             */
+            final FoodDetails foodDetails = (FoodDetails) getArguments().getSerializable("FOOD");
             builder.setView(view)
                     .setTitle("Edit Item")
                     .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
@@ -101,9 +117,8 @@ public class AddOrEditItem extends DialogFragment {
                         public void onClick(DialogInterface dialogInterface, int i) {
 
                             Toast.makeText(getContext(), "Added", Toast.LENGTH_SHORT).show();
+                            changeEnteredData(foodDetails);
 
-
-                            callback.onAddDialogClick(getEnteredData(view));
 
                         }
                     })
@@ -115,9 +130,18 @@ public class AddOrEditItem extends DialogFragment {
 
                         }
                     });
+
+
+            foodName.setText(foodDetails.getFoodName());
+            foodPrice.setText(Integer.toString(foodDetails.getPrice()));
+            foodImage.setImageResource(foodDetails.getFoodImage());
+
+            /*
+                * ENDS
+            */
         }
-        ImageView imageView = (ImageView) view.findViewById(R.id.fimage);
-        imageView.setOnClickListener(new View.OnClickListener() {
+
+        foodImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkForPermissions();
@@ -126,13 +150,16 @@ public class AddOrEditItem extends DialogFragment {
         return builder.create();
     }
 
+    private void changeEnteredData(FoodDetails foodDetails){
+        foodDetails.setFoodName(foodName.getText().toString());
+        foodDetails.setPrice(Integer.parseInt(foodPrice.getText().toString()));
+    }
 
-    private FoodDetails getEnteredData(View view) {
-        EditText editText = (EditText) view.findViewById(R.id.fname);
-        String fname = editText.getText().toString();
+    private FoodDetails getEnteredData() {
 
-        editText = (EditText) view.findViewById(R.id.fprice);
-        Integer fprice = Integer.parseInt(editText.getText().toString());
+        String fname = foodName.getText().toString();
+
+        Integer fprice = Integer.parseInt(foodPrice.getText().toString());
 
         //ImageView imageView = (ImageView) view.findViewById(R.id.fimage);
         return new FoodDetails(fprice, fname, R.mipmap.ic_launcher);
@@ -157,9 +184,8 @@ public class AddOrEditItem extends DialogFragment {
             try {
 
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+                foodImage.setImageBitmap(bitmap);
 
-                ImageView imageView = (ImageView) view.findViewById(R.id.fimage);
-                imageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 Toast.makeText(getContext(), "Maki ", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
@@ -178,9 +204,11 @@ public class AddOrEditItem extends DialogFragment {
             imageSelector();
         }
     }
+
     private boolean requirePermissions() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
+
     private boolean hasPermissions() {
         return getContext().checkSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE") == PackageManager.PERMISSION_GRANTED;
     }
@@ -189,10 +217,9 @@ public class AddOrEditItem extends DialogFragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == STORAGE_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 imageSelector();
-            }
-            else {
+            } else {
                 Toast.makeText(getContext(), "Permission Required To Add Image", Toast.LENGTH_SHORT).show();
             }
         }
