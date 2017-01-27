@@ -10,9 +10,7 @@ public class StorageClass {
     private static ArrayList<FoodDetails> foodItems;
     private static ArrayList<FoodDetails> foodCart;
 
-    public StorageClass() {
-
-    }
+    public StorageClass() {}
 
     public void setCatalogData(FoodDetails item) {
         foodItems.add(item);

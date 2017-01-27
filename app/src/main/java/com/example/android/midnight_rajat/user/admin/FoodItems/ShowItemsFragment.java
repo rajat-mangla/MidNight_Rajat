@@ -1,7 +1,7 @@
 package com.example.android.midnight_rajat.user.admin.FoodItems;
 
+import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 
 
@@ -12,10 +12,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.android.midnight_rajat.R;
 import com.example.android.midnight_rajat.fooddata.FoodDetails;
+import com.example.android.midnight_rajat.fooddata.SqlData;
 import com.example.android.midnight_rajat.fooddata.StorageClass;
 
 /**
@@ -26,23 +26,28 @@ import com.example.android.midnight_rajat.fooddata.StorageClass;
 /*
 Using Catalog Data As The Data To Represent the Food Items ....
  */
-public class ShowItemsFragment extends Fragment implements AddOrEditItem.getDataInterface {
-    ListView listview;
+public class ShowItemsFragment extends Fragment implements AddOrEditDialog.getDataInterface {
+
     ShowItemsAdapter showItemsAdapter;
+    int index=-1;
+    SqlData sqlData;  // initiated in onCreate Method
+
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
+         sqlData = new SqlData(getContext());
 
         View view = inflater.inflate(R.layout.fragment_add_items, container, false);
-
-        listview = (ListView) view.findViewById(R.id.fooditems);
+        ListView listview = (ListView) view.findViewById(R.id.fooditems);
         showItemsAdapter = new ShowItemsAdapter(getContext(),new StorageClass().getCatalogData());
         listview.setAdapter(showItemsAdapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showEditDialog(i,showItemsAdapter.getItem(i));
+                index = i;
+                showEditDialog(showItemsAdapter.getItem(i));
+
             }
         });
 
@@ -63,21 +68,28 @@ public class ShowItemsFragment extends Fragment implements AddOrEditItem.getData
     function to pop up the Add dialog box
      */
     private void showAddDialog(){
-        DialogFragment dialogFragment = new AddOrEditItem();
+        DialogFragment dialogFragment = new AddOrEditDialog();
         dialogFragment.setTargetFragment(ShowItemsFragment.this,1);
         dialogFragment.show(getFragmentManager(),"AddItem");
     }
 
     @Override
     public void onAddDialogClick(FoodDetails foodDetails) {
-        new StorageClass().getCatalogData().add(foodDetails);
+        StorageClass storageClass = new StorageClass();
+        int index = storageClass.getCatalogData().size();
+        storageClass.getCatalogData().add(foodDetails);
+
+        sqlData.insertFoodDetail(foodDetails.getFoodName(),foodDetails.getPrice(),index);
+
         showItemsAdapter.notifyDataSetChanged();
     }
 
-    private void showEditDialog(int index,FoodDetails foodDetail){
-        DialogFragment dialogFragment = new AddOrEditItem();
+    /*
+        Edit Dialog Functions Implementation
+     */
+    private void showEditDialog(FoodDetails foodDetail){
+        DialogFragment dialogFragment = new AddOrEditDialog();
         Bundle bundle = new Bundle();
-        bundle.putInt("INDEX_OF_FOOD",index);
         bundle.putSerializable("FOOD",foodDetail);
         dialogFragment.setArguments(bundle);
         dialogFragment.setTargetFragment(ShowItemsFragment.this,1);
@@ -85,7 +97,10 @@ public class ShowItemsFragment extends Fragment implements AddOrEditItem.getData
     }
 
     @Override
-    public void onEditDialogClick() {
+    public void onEditDialogClick(FoodDetails foodDetails) {
+        if (index != -1){
+            sqlData.updateFoodDetail(foodDetails.getFoodName(),foodDetails.getPrice(),index);
+        }
         showItemsAdapter.notifyDataSetChanged();
     }
 }

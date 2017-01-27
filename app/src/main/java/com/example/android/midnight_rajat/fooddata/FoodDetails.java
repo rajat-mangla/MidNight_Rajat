@@ -14,7 +14,7 @@ public class FoodDetails implements Serializable {
     private int foodQuantity;
 
 
-    public FoodDetails(int mPrice, String mFoodName, int mFoodImage) {
+    public FoodDetails(String mFoodName, int mPrice, int mFoodImage) {
         price = mPrice;
         foodName = mFoodName;
         foodImage = mFoodImage;

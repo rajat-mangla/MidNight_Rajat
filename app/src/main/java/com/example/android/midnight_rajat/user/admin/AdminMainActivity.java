@@ -1,5 +1,8 @@
 package com.example.android.midnight_rajat.user.admin;
 
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,8 +12,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.example.android.midnight_rajat.R;
+import com.example.android.midnight_rajat.fooddata.FoodDetails;
+import com.example.android.midnight_rajat.fooddata.SqlData;
+import com.example.android.midnight_rajat.fooddata.StorageClass;
 import com.example.android.midnight_rajat.user.admin.FoodItems.ShowItemsFragment;
 
 public class AdminMainActivity extends AppCompatActivity {
@@ -18,30 +25,57 @@ public class AdminMainActivity extends AppCompatActivity {
 
     public static final int NUM_PAGES = 3;
     private ViewPager viewPager;
-    private PagerAdapter pagerAdapter;
-    private TabLayout tabLayout;
+    public SqlData sqlData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        setToolbar();
+        setViewPager();
+        setTabLayout();
 
 
-
-
-        viewPager = (ViewPager)findViewById(R.id.viewpager);
-        pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-
-        tabLayout = (TabLayout)findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
-
+        getFoodDataFromDatabase();
 
 
     }
+    private void setToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+    private void setViewPager(){
+        viewPager = (ViewPager)findViewById(R.id.viewpager);
+        PagerAdapter pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
+    }
+    private void setTabLayout(){
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void getFoodDataFromDatabase(){
+        sqlData=new SqlData(this);
+        Cursor cursor = sqlData.getCursorFoodData();
+        if (cursor.getCount()==0){
+            Toast.makeText(this,"No Data",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            /*
+                * Column 1 gives _ID
+                * Column 2 gives FoodName
+                * Column 3 gives FoodPrice
+            */
+
+            StorageClass storageClass = new StorageClass();
+            while (cursor.moveToNext()){
+                storageClass.getCatalogData().add(new FoodDetails(cursor.getString(1),cursor.getInt(2),R.mipmap.ic_launcher));
+            }
+        }
+    }
+
 
     @Override
     public void onBackPressed() {

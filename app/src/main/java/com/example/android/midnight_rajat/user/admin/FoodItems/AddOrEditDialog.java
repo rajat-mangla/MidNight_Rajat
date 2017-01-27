@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import static android.app.Activity.RESULT_OK;
 
-public class AddOrEditItem extends DialogFragment {
+public class AddOrEditDialog extends DialogFragment {
 
     String[] storagePermission = {"android.permission.WRITE_EXTERNAL_STORAGE"};
     private final int STORAGE_PERMISSION = 2;
@@ -47,7 +47,7 @@ public class AddOrEditItem extends DialogFragment {
      */
     public interface getDataInterface {
         void onAddDialogClick(FoodDetails foodDetails);
-        void onEditDialogClick();
+        void onEditDialogClick(FoodDetails foodDetails);
     }
 
     getDataInterface callback;
@@ -93,10 +93,7 @@ public class AddOrEditItem extends DialogFragment {
                         public void onClick(DialogInterface dialogInterface, int i) {
 
                             Toast.makeText(getContext(), "Added", Toast.LENGTH_SHORT).show();
-
-
                             callback.onAddDialogClick(getEnteredData());
-
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -107,19 +104,22 @@ public class AddOrEditItem extends DialogFragment {
                     });
         } else {
             /*
-            Displaying the Food Data
+            Displaying the Edit Food Dialog box
              */
+
+            // getting food detail
             final FoodDetails foodDetails = (FoodDetails) getArguments().getSerializable("FOOD");
+
             builder.setView(view)
                     .setTitle("Edit Item")
                     .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
 
-                            Toast.makeText(getContext(), "Added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Edited", Toast.LENGTH_SHORT).show();
                             changeEnteredData(foodDetails);
 
-
+                            callback.onEditDialogClick(foodDetails);
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -127,10 +127,8 @@ public class AddOrEditItem extends DialogFragment {
                         public void onClick(DialogInterface dialogInterface, int i) {
 
                             Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
-
                         }
                     });
-
 
             foodName.setText(foodDetails.getFoodName());
             foodPrice.setText(Integer.toString(foodDetails.getPrice()));
@@ -150,6 +148,8 @@ public class AddOrEditItem extends DialogFragment {
         return builder.create();
     }
 
+
+
     private void changeEnteredData(FoodDetails foodDetails){
         foodDetails.setFoodName(foodName.getText().toString());
         foodDetails.setPrice(Integer.parseInt(foodPrice.getText().toString()));
@@ -162,7 +162,7 @@ public class AddOrEditItem extends DialogFragment {
         Integer fprice = Integer.parseInt(foodPrice.getText().toString());
 
         //ImageView imageView = (ImageView) view.findViewById(R.id.fimage);
-        return new FoodDetails(fprice, fname, R.mipmap.ic_launcher);
+        return new FoodDetails(fname, fprice, R.mipmap.ic_launcher);
     }
 
     /*
