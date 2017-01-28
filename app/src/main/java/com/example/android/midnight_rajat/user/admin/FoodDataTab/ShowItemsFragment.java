@@ -110,6 +110,7 @@ public class ShowItemsFragment extends Fragment implements AddOrEditDialog.getDa
 
     /*
         * Function to perform tasks after add button of add dialog is clicked ...
+        *
      */
     @Override
     public void onAddDialogClick(FoodDetails foodDetails) {
