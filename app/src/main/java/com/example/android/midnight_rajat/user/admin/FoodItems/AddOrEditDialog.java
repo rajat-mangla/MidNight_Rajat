@@ -1,6 +1,8 @@
 package com.example.android.midnight_rajat.user.admin.FoodItems;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,8 +15,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,8 +28,11 @@ import android.widget.Toast;
 import com.example.android.midnight_rajat.R;
 import com.example.android.midnight_rajat.fooddata.FoodDetails;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static android.R.attr.bitmap;
 import static android.app.Activity.RESULT_OK;
 
 public class AddOrEditDialog extends DialogFragment {
@@ -31,8 +40,6 @@ public class AddOrEditDialog extends DialogFragment {
     String[] storagePermission = {"android.permission.WRITE_EXTERNAL_STORAGE"};
     private final int STORAGE_PERMISSION = 2;
     private final int PICK_IMAGE = 1;
-
-
     /*
      * Layout VARIABLES
     */
@@ -40,26 +47,27 @@ public class AddOrEditDialog extends DialogFragment {
     ImageView foodImage;
     EditText foodName;
     EditText foodPrice;
-
-
+    Bitmap bitmap;
     /*
     An interface to send the data back to the host activity
      */
     public interface getDataInterface {
         void onAddDialogClick(FoodDetails foodDetails);
+
         void onEditDialogClick(FoodDetails foodDetails);
     }
-
     getDataInterface callback;
     /*
     An interface to send the data back to the host activity
      */
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
+            /*
+                * Assigning Parent Fragment to the Interface ...
+             */
             callback = (getDataInterface) getTargetFragment();
         } catch (ClassCastException e) {
             throw new ClassCastException(getTargetFragment().toString() + "  must implement this fucking interface");
@@ -69,75 +77,21 @@ public class AddOrEditDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
         /*
-        working the Xml layout
+            working the Xml layout
             * retrieving
             * assigning to the variables
-         */
+        */
         LayoutInflater inflater = getActivity().getLayoutInflater();
         view = inflater.inflate(R.layout.activity_add_or_edit_item, null);
         foodImage = (ImageView) view.findViewById(R.id.fimage);
         foodName = (EditText) view.findViewById(R.id.fname);
+        foodName.requestFocus();
         foodPrice = (EditText) view.findViewById(R.id.fprice);
         /*
             * Ends
         */
-
-        if (getArguments()==null) {
-            builder.setView(view)
-                    .setTitle("Add Item")
-                    .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                            Toast.makeText(getContext(), "Added", Toast.LENGTH_SHORT).show();
-                            callback.onAddDialogClick(getEnteredData());
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else {
-            /*
-            Displaying the Edit Food Dialog box
-             */
-
-            // getting food detail
-            final FoodDetails foodDetails = (FoodDetails) getArguments().getSerializable("FOOD");
-
-            builder.setView(view)
-                    .setTitle("Edit Item")
-                    .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                            Toast.makeText(getContext(), "Edited", Toast.LENGTH_SHORT).show();
-                            changeEnteredData(foodDetails);
-
-                            callback.onEditDialogClick(foodDetails);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                            Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-            foodName.setText(foodDetails.getFoodName());
-            foodPrice.setText(Integer.toString(foodDetails.getPrice()));
-            foodImage.setImageResource(foodDetails.getFoodImage());
-
-            /*
-                * ENDS
-            */
-        }
+        AlertDialog.Builder builder = setBuilder();
 
         foodImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,17 +102,95 @@ public class AddOrEditDialog extends DialogFragment {
         return builder.create();
     }
 
+    /*
+        * A fUNCTION tO Check if there is input or Not ...
+     */
+    private boolean noInput() {
+        if (foodName.getText().toString().equals("") || foodPrice.getText().toString().equals("")) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        final AlertDialog alertDialog = (AlertDialog) getDialog();
+
+        //alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        foodName.setSelection(foodName.getText().length());
+
+        Button positiveButton = alertDialog.getButton(Dialog.BUTTON_POSITIVE);
+        positiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (noInput()) {
+                    Toast.makeText(getContext(), "PLEASE ENTER DETAILS", Toast.LENGTH_SHORT).show();
+                } else {
+                    saveImage();
+                    if (getArguments() == null) {
+                        Toast.makeText(getContext(), "Added", Toast.LENGTH_SHORT).show();
+                        callback.onAddDialogClick(getEnteredData());
+                    } else {
+                        final FoodDetails foodDetails = (FoodDetails) getArguments().getSerializable("FOOD");
+                        Toast.makeText(getContext(), "Edited", Toast.LENGTH_SHORT).show();
+                        changeEnteredData(foodDetails);
+
+                        callback.onEditDialogClick(foodDetails);
+                    }
+                    alertDialog.dismiss();
+                }
+            }
+        });
+    }
+
+    private AlertDialog.Builder setBuilder() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getContext(),"Canceled",Toast.LENGTH_SHORT).show();
+                    }
+                });
+        if (getArguments() == null) {
+            builder.setTitle("Add Item")
+                    .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+
+        } else {
+            /*
+                Displaying the Edit Food Dialog box
+             */
+            builder.setTitle("Edit Item")
+                    .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    });
+            FoodDetails foodDetails = (FoodDetails) getArguments().getSerializable("FOOD");
+            foodName.setText(foodDetails.getFoodName());
+            foodPrice.setText(Integer.toString(foodDetails.getPrice()));
+            foodImage.setImageResource(foodDetails.getFoodImage());
+            /*
+                * ENDS
+            */
+        }
+
+        return builder;
+    }
 
 
-    private void changeEnteredData(FoodDetails foodDetails){
+    private void changeEnteredData(FoodDetails foodDetails) {
         foodDetails.setFoodName(foodName.getText().toString());
         foodDetails.setPrice(Integer.parseInt(foodPrice.getText().toString()));
     }
-
     private FoodDetails getEnteredData() {
 
         String fname = foodName.getText().toString();
-
         Integer fprice = Integer.parseInt(foodPrice.getText().toString());
 
         //ImageView imageView = (ImageView) view.findViewById(R.id.fimage);
@@ -183,7 +215,7 @@ public class AddOrEditDialog extends DialogFragment {
             Uri uri = data.getData();
             try {
 
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
                 foodImage.setImageBitmap(bitmap);
 
             } catch (IOException e) {
@@ -192,7 +224,27 @@ public class AddOrEditDialog extends DialogFragment {
             }
         }
     }
+    /*
+        * Pick Images Ends
+     */
 
+    private void saveImage(){
+        ContextWrapper contextWrapper = new ContextWrapper(getContext());
+        File directory = contextWrapper.getDir("foodData",Context.MODE_PRIVATE);
+        if (!directory.exists()){
+            directory.mkdir();
+        }
+        File mypath = new File(directory, foodName.getText().toString()+".png");
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+            Toast.makeText(getContext(), "Image Added ", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("SAVE_IMAGE", e.getMessage(), e);
+        }
+    }
 
     /*
     Below Function to check if it is Android 6.0 Marshmallow or above ...

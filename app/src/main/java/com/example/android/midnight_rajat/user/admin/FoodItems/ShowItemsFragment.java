@@ -42,12 +42,20 @@ public class ShowItemsFragment extends Fragment implements AddOrEditDialog.getDa
         showItemsAdapter = new ShowItemsAdapter(getContext(),new StorageClass().getCatalogData());
         listview.setAdapter(showItemsAdapter);
 
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 index = i;
                 showEditDialog(showItemsAdapter.getItem(i));
 
+            }
+        });*/
+        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                index = position;
+                showEditDialog(showItemsAdapter.getItem(position));
+                return false;
             }
         });
 
