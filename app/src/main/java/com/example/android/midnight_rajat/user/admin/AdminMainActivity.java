@@ -29,16 +29,13 @@ public class AdminMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
-
         setToolbar();
         setViewPager();
         setTabLayout();
 
-
         getFoodDataFromDatabase();
-
-
     }
+
     private void setToolbar(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,8 +54,9 @@ public class AdminMainActivity extends AppCompatActivity {
     private void getFoodDataFromDatabase(){
         sqlData=new SqlData(this);
         Cursor cursor = sqlData.getCursorFoodData();
-        if (cursor.getCount()==0){
-            Toast.makeText(this,"No Data",Toast.LENGTH_SHORT).show();
+        StorageClass storageClass = new StorageClass();
+        if (cursor.getCount()==0 || cursor.getCount()==storageClass.getCatalogData().size()){
+            //Toast.makeText(this,"No Data or Data Is There",Toast.LENGTH_LONG).show();
         }
         else {
             /*
@@ -67,8 +65,8 @@ public class AdminMainActivity extends AppCompatActivity {
                 * Column 3 gives FoodPrice
             */
 
-            StorageClass storageClass = new StorageClass();
-            Toast.makeText(this,"No Data",Toast.LENGTH_SHORT).show();
+
+            //Toast.makeText(this,"Getting Data",Toast.LENGTH_SHORT).show();
             while (cursor.moveToNext()){
 
                 FoodDetails foodDetails = new FoodDetails(cursor.getString(1),cursor.getInt(2),cursor.getString(3));
