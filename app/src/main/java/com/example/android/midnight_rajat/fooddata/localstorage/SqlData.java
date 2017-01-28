@@ -81,6 +81,11 @@ public class SqlData extends SQLiteOpenHelper {
         return true;
     }
 
+    public Integer deleteFoodDetail(Integer index){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        return sqLiteDatabase.delete(FoodReader.FoodEntry.TABLE_NAME,FoodReader.FoodEntry._ID +" = ?" , new String[]{Integer.toString(index)});
+    }
+
     public Cursor getCursorFoodData(){
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor demo = sqLiteDatabase.rawQuery(" select * from "+ FoodReader.FoodEntry.TABLE_NAME,null);

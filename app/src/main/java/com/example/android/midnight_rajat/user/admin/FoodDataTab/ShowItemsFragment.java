@@ -5,12 +5,16 @@ import android.support.v4.app.DialogFragment;
 
 
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.midnight_rajat.R;
 import com.example.android.midnight_rajat.fooddata.FoodDetails;
@@ -40,6 +44,7 @@ public class ShowItemsFragment extends Fragment implements AddOrEditDialog.getDa
         ListView listview = (ListView) view.findViewById(R.id.fooditems);
         showItemsAdapter = new ShowItemsAdapter(getContext(),new StorageClass().getCatalogData());
         listview.setAdapter(showItemsAdapter);
+        registerForContextMenu(listview);
 
         /*listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -53,7 +58,6 @@ public class ShowItemsFragment extends Fragment implements AddOrEditDialog.getDa
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 index = position;
-                showEditDialog(showItemsAdapter.getItem(position));
                 return false;
             }
         });
@@ -70,10 +74,34 @@ public class ShowItemsFragment extends Fragment implements AddOrEditDialog.getDa
         return view;
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater menuInflater = getActivity().getMenuInflater();
+        menuInflater.inflate(R.menu.item_press_menu,menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.edititem :
+                showEditDialog(showItemsAdapter.getItem(index));
+                return true;
+            case R.id.remove :
+                new StorageClass().getCatalogData().remove(index);
+                sqlData.deleteFoodDetail(index);
+
+                showItemsAdapter.notifyDataSetChanged();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     /*
-    function to pop up the Add dialog box
-     */
+            function to pop up the Add dialog box
+             */
     private void showAddDialog(){
         DialogFragment dialogFragment = new AddOrEditDialog();
         dialogFragment.setTargetFragment(ShowItemsFragment.this,1);
