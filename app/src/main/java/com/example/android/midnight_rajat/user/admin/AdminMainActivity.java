@@ -70,9 +70,9 @@ public class AdminMainActivity extends AppCompatActivity {
             StorageClass storageClass = new StorageClass();
             Toast.makeText(this,"No Data",Toast.LENGTH_SHORT).show();
             while (cursor.moveToNext()){
-                storageClass.getCatalogData().add(new FoodDetails(cursor.getString(1),cursor.getInt(2),R.mipmap.ic_launcher));
 
-
+                FoodDetails foodDetails = new FoodDetails(cursor.getString(1),cursor.getInt(2),cursor.getString(3));
+                storageClass.getCatalogData().add(foodDetails);
             }
         }
     }

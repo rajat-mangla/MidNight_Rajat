@@ -1,6 +1,8 @@
 package com.example.android.midnight_rajat.user.admin.FoodDataTab;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +14,12 @@ import android.widget.TextView;
 import com.example.android.midnight_rajat.R;
 import com.example.android.midnight_rajat.fooddata.FoodDetails;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+
+import static android.R.attr.path;
 
 /**
  * Created by rajat on 20-01-2017.
@@ -40,7 +47,23 @@ public class ShowItemsAdapter extends ArrayAdapter<FoodDetails> {
         TextView ifoodName = (TextView) convertView.findViewById(R.id.listname);
         TextView ifoodPrice = (TextView) convertView.findViewById(R.id.selectedprice);
 
-        ifoodimage.setImageResource(foodItem.getFoodImage());
+        try {
+            if (foodItem.getImagePath().equals("")){
+                ifoodimage.setImageResource(R.drawable.image_not_available_14);
+            }
+            else {
+                File f=new File(foodItem.getImagePath());
+                Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+
+                ifoodimage.setImageBitmap(b);
+            }
+
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
         ifoodName.setText(foodItem.getFoodName());
         ifoodPrice.setText(Integer.toString(foodItem.getPrice()));
         return convertView;

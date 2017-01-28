@@ -17,6 +17,6 @@ public final class FoodReader{
         public static final String TABLE_NAME = "FoodDetails";
         public static final String COLUMN_FOOD_NAME = "FoodName";
         public static final String COLUMN_FOOD_PRICE = "FoodPrice";
-        public static final String COLUMN_FOOD_ID = "FoodId";
+        public static final String COLUMN_FOOD_IMG_PATH = "FoodImgPath";
     }
 }

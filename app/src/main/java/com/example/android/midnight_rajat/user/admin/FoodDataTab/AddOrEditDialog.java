@@ -124,14 +124,18 @@ public class AddOrEditDialog extends DialogFragment {
                 if (noInput()) {
                     Toast.makeText(getContext(), "PLEASE ENTER DETAILS", Toast.LENGTH_SHORT).show();
                 } else {
-                    saveImage();
+
+                    // save Image method called from this ....
+
+                    String imgPath = saveImage();
+
                     if (getArguments() == null) {
                         Toast.makeText(getContext(), "Added", Toast.LENGTH_SHORT).show();
-                        callback.onAddDialogClick(getEnteredData());
+                        callback.onAddDialogClick(getEnteredData(imgPath));
                     } else {
                         final FoodDetails foodDetails = (FoodDetails) getArguments().getSerializable("FOOD");
                         Toast.makeText(getContext(), "Edited", Toast.LENGTH_SHORT).show();
-                        changeEnteredData(foodDetails);
+                        changeEnteredData(foodDetails,imgPath);
 
                         callback.onEditDialogClick(foodDetails);
                     }
@@ -176,7 +180,7 @@ public class AddOrEditDialog extends DialogFragment {
             FoodDetails foodDetails = (FoodDetails) getArguments().getSerializable("FOOD");
             foodName.setText(foodDetails.getFoodName());
             foodPrice.setText(Integer.toString(foodDetails.getPrice()));
-            foodImage.setImageResource(foodDetails.getFoodImage());
+            foodImage.setImageResource(R.mipmap.ic_launcher);
             /*
                 * ENDS
             */
@@ -189,22 +193,26 @@ public class AddOrEditDialog extends DialogFragment {
         * Function to change Data of Existing Food Item
             * Used For Edit Dialog Box
      */
-    private void changeEnteredData(FoodDetails foodDetails) {
+    private void changeEnteredData(FoodDetails foodDetails,String imgPath) {
         foodDetails.setFoodName(foodName.getText().toString());
         foodDetails.setPrice(Integer.parseInt(foodPrice.getText().toString()));
+        foodDetails.setImagePath(imgPath);
     }
 
     /*
         * Function to Add Data of a Food Item
             * Used For Add Dialog Box
      */
-    private FoodDetails getEnteredData() {
+    private FoodDetails getEnteredData(String imgPath) {
 
         String fname = foodName.getText().toString();
         Integer fprice = Integer.parseInt(foodPrice.getText().toString());
 
+        FoodDetails foodDetails =new FoodDetails(fname, fprice,imgPath);
+
+
         //ImageView imageView = (ImageView) view.findViewById(R.id.fimage);
-        return new FoodDetails(fname, fprice, R.mipmap.ic_launcher);
+        return foodDetails;
     }
 
 
@@ -239,22 +247,27 @@ public class AddOrEditDialog extends DialogFragment {
         * Pick Images Ends
      */
 
-    private void saveImage(){
+    private String saveImage(){
         ContextWrapper contextWrapper = new ContextWrapper(getContext());
         File directory = contextWrapper.getDir("foodData",Context.MODE_PRIVATE);
-        if (!directory.exists()){
-            directory.mkdir();
-        }
-        File mypath = new File(directory, foodName.getText().toString()+".png");
+
+        File myPath = new File(directory, foodName.getText().toString()+".jpg");
+        String imgPath = myPath.getAbsolutePath();
+
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(mypath);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            if (bitmap == null){
+                return "";
+            }
+            fos = new FileOutputStream(myPath);
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
             Toast.makeText(getContext(), "Image Added ", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Log.e("SAVE_IMAGE", e.getMessage(), e);
         }
+        return imgPath;
     }
 
     /*

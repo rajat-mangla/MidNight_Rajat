@@ -80,13 +80,16 @@ public class ShowItemsFragment extends Fragment implements AddOrEditDialog.getDa
         dialogFragment.show(getFragmentManager(),"AddItem");
     }
 
+    /*
+        * Function to perform tasks after add button of add dialog is clicked ...
+     */
     @Override
     public void onAddDialogClick(FoodDetails foodDetails) {
         StorageClass storageClass = new StorageClass();
         int index = storageClass.getCatalogData().size();
         storageClass.getCatalogData().add(foodDetails);
 
-        sqlData.insertFoodDetail(foodDetails.getFoodName(),foodDetails.getPrice(),index);
+        sqlData.insertFoodDetail(foodDetails.getFoodName(),foodDetails.getPrice(),index,foodDetails.getImagePath());
 
         showItemsAdapter.notifyDataSetChanged();
     }
@@ -106,8 +109,9 @@ public class ShowItemsFragment extends Fragment implements AddOrEditDialog.getDa
     @Override
     public void onEditDialogClick(FoodDetails foodDetails) {
         if (index != -1){
-            sqlData.updateFoodDetail(foodDetails.getFoodName(),foodDetails.getPrice(),index);
+            sqlData.updateFoodDetail(foodDetails.getFoodName(),foodDetails.getPrice(),index,foodDetails.getImagePath());
         }
         showItemsAdapter.notifyDataSetChanged();
     }
+
 }

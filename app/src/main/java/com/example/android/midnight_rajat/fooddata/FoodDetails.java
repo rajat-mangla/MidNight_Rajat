@@ -10,19 +10,22 @@ import java.io.Serializable;
 public class FoodDetails implements Serializable {
     private int price;
     private String foodName;
-    private int foodImage;
     private int foodQuantity;
+    private String imagePath;
 
-
-    public FoodDetails(String mFoodName, int mPrice, int mFoodImage) {
+    public FoodDetails(String mFoodName, int mPrice,String imgPath) {
         price = mPrice;
         foodName = mFoodName;
-        foodImage = mFoodImage;
         foodQuantity = 0;
+        imagePath=imgPath;
     }
 
-    public void setFoodImage(int foodImage) {
-        this.foodImage = foodImage;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 
     public void setFoodName(String foodName) {
@@ -35,10 +38,6 @@ public class FoodDetails implements Serializable {
 
     public int getPrice() {
         return price;
-    }
-
-    public int getFoodImage() {
-        return foodImage;
     }
 
     public String getFoodName() {

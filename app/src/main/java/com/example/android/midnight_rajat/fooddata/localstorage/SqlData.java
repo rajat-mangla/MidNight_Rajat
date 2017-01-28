@@ -17,7 +17,7 @@ public class SqlData extends SQLiteOpenHelper {
             "CREATE TABLE " + FoodReader.FoodEntry.TABLE_NAME + " (" +
                     FoodReader.FoodEntry._ID + " INTEGER PRIMARY KEY," +
                     FoodReader.FoodEntry.COLUMN_FOOD_NAME + " TEXT," +
-                    FoodReader.FoodEntry.COLUMN_FOOD_PRICE + " INTEGER)";
+                    FoodReader.FoodEntry.COLUMN_FOOD_PRICE + " INTEGER," + FoodReader.FoodEntry.COLUMN_FOOD_IMG_PATH + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + FoodReader.FoodEntry.TABLE_NAME;
@@ -48,13 +48,14 @@ public class SqlData extends SQLiteOpenHelper {
 
     }
 
-    public boolean insertFoodDetail(String foodName,int foodPrice,int index){
+    public boolean insertFoodDetail(String foodName,int foodPrice,int index,String imgPath){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(FoodReader.FoodEntry.COLUMN_FOOD_NAME,foodName);
         contentValues.put(FoodReader.FoodEntry.COLUMN_FOOD_PRICE,foodPrice);
         contentValues.put(FoodReader.FoodEntry._ID,index);
+        contentValues.put(FoodReader.FoodEntry.COLUMN_FOOD_IMG_PATH,imgPath);
         long rowId = sqLiteDatabase.insert(FoodReader.FoodEntry.TABLE_NAME,null,contentValues);
         if (rowId == -1){
             return false;
@@ -64,13 +65,15 @@ public class SqlData extends SQLiteOpenHelper {
         }
     }
 
-    public boolean updateFoodDetail(String foodName,int foodPrice,int index){
+    public boolean updateFoodDetail(String foodName,int foodPrice,int index,String imgPath){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(FoodReader.FoodEntry.COLUMN_FOOD_NAME,foodName);
         contentValues.put(FoodReader.FoodEntry.COLUMN_FOOD_PRICE,foodPrice);
         contentValues.put(FoodReader.FoodEntry._ID,index);
+        contentValues.put(FoodReader.FoodEntry.COLUMN_FOOD_IMG_PATH,imgPath);
+
         long rowId = sqLiteDatabase.update(FoodReader.FoodEntry.TABLE_NAME,contentValues,FoodReader.FoodEntry._ID +" = ?",new String[] {Integer.toString(index)});
         if (rowId == -1){
             return false;
