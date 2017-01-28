@@ -26,6 +26,7 @@ public class SqlData extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "FoodData.db";
 
+
     /*
      * constructor ....
      */
@@ -44,6 +45,7 @@ public class SqlData extends SQLiteOpenHelper {
         // to simply to discard the data and start over
         sqLiteDatabase.execSQL(SQL_DELETE_ENTRIES);
         onCreate(sqLiteDatabase);
+
     }
 
     public boolean insertFoodDetail(String foodName,int foodPrice,int index){
