@@ -1,4 +1,4 @@
-package com.example.android.midnight_rajat.fooddata;
+package com.example.android.midnight_rajat.fooddata.localstorage;
 
 import android.provider.BaseColumns;
 

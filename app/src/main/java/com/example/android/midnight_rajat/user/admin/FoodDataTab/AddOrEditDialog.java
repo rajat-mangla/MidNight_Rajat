@@ -1,4 +1,4 @@
-package com.example.android.midnight_rajat.user.admin.FoodItems;
+package com.example.android.midnight_rajat.user.admin.FoodDataTab;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -18,8 +18,6 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +30,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static android.R.attr.bitmap;
 import static android.app.Activity.RESULT_OK;
 
 public class AddOrEditDialog extends DialogFragment {
@@ -144,6 +141,11 @@ public class AddOrEditDialog extends DialogFragment {
         });
     }
 
+
+    /*
+         * Function to get builder of Alert Dialog
+            * it also checks whether it Should be Edit Dialog or Add Dialog ...
+     */
     private AlertDialog.Builder setBuilder() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view)
@@ -179,15 +181,23 @@ public class AddOrEditDialog extends DialogFragment {
                 * ENDS
             */
         }
-
         return builder;
     }
 
 
+    /*
+        * Function to change Data of Existing Food Item
+            * Used For Edit Dialog Box
+     */
     private void changeEnteredData(FoodDetails foodDetails) {
         foodDetails.setFoodName(foodName.getText().toString());
         foodDetails.setPrice(Integer.parseInt(foodPrice.getText().toString()));
     }
+
+    /*
+        * Function to Add Data of a Food Item
+            * Used For Add Dialog Box
+     */
     private FoodDetails getEnteredData() {
 
         String fname = foodName.getText().toString();
@@ -196,6 +206,7 @@ public class AddOrEditDialog extends DialogFragment {
         //ImageView imageView = (ImageView) view.findViewById(R.id.fimage);
         return new FoodDetails(fname, fprice, R.mipmap.ic_launcher);
     }
+
 
     /*
     A function to pick images ...

@@ -1,11 +1,12 @@
-package com.example.android.midnight_rajat.fooddata;
+package com.example.android.midnight_rajat.fooddata.localstorage;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
+
+import com.example.android.midnight_rajat.fooddata.localstorage.FoodReader;
 
 /**
  * Created by rajat on 26-01-2017.

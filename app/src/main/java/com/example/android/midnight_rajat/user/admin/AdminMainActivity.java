@@ -1,8 +1,6 @@
 package com.example.android.midnight_rajat.user.admin;
 
 import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,9 +14,9 @@ import android.widget.Toast;
 
 import com.example.android.midnight_rajat.R;
 import com.example.android.midnight_rajat.fooddata.FoodDetails;
-import com.example.android.midnight_rajat.fooddata.SqlData;
+import com.example.android.midnight_rajat.fooddata.localstorage.SqlData;
 import com.example.android.midnight_rajat.fooddata.StorageClass;
-import com.example.android.midnight_rajat.user.admin.FoodItems.ShowItemsFragment;
+import com.example.android.midnight_rajat.user.admin.FoodDataTab.ShowItemsFragment;
 
 public class AdminMainActivity extends AppCompatActivity {
 

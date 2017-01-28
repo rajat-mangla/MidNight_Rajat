@@ -1,4 +1,4 @@
-package com.example.android.midnight_rajat.user.admin.FoodItems;
+package com.example.android.midnight_rajat.user.admin.FoodDataTab;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -6,13 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.midnight_rajat.R;
 import com.example.android.midnight_rajat.fooddata.FoodDetails;
-import com.example.android.midnight_rajat.fooddata.StorageClass;
 
 import java.util.ArrayList;
 

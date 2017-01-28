@@ -1,6 +1,5 @@
-package com.example.android.midnight_rajat.user.admin.FoodItems;
+package com.example.android.midnight_rajat.user.admin.FoodDataTab;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -15,7 +14,7 @@ import android.widget.ListView;
 
 import com.example.android.midnight_rajat.R;
 import com.example.android.midnight_rajat.fooddata.FoodDetails;
-import com.example.android.midnight_rajat.fooddata.SqlData;
+import com.example.android.midnight_rajat.fooddata.localstorage.SqlData;
 import com.example.android.midnight_rajat.fooddata.StorageClass;
 
 /**
